@@ -1,0 +1,26 @@
+reveal:
+  reference: 
+    genome: "mm10.fasta"
+  tracks:
+    - name: "Sample BAM 1"
+      path: /path1/sample1.bam
+    - name: "Sample BED 1"
+      path: /path2/sample1.bed
+    - name: "Sample VCF 1"
+      path: /path1/sample1.vcf
+  capture:
+    regions: /path3/regions.bed
+    slops: [50, 500]
+    igvOptions:
+      - option: "SKIP_VERSION"
+        value: "null,2.12.2" 
+      - option: "SHOW_SEQUENCE_TRANSLATION"
+        value: "true"
+      - option: "IGV.Bounds"
+        value: "129,85,2243,1263"
+      - option: "SAM.SHOW_SOFT_CLIPPED"
+        value: "true"
+      - option: "IGV.Bounds"
+        value: "0,0,1920,1080"
+      - option: "DETAILS_BEHAVIOR"
+        value: "CLICK"
