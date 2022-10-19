@@ -15,4 +15,4 @@ vscode:
 
 tasks:
   - init: wget -qO- https://get.nextflow.io | bash && chmod +x nextflow
-    command: ./nextflow --version
+    command: nextflow -version
