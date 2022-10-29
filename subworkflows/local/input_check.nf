@@ -6,7 +6,7 @@ include { SAMPLESHEET_CHECK } from '../../modules/local/samplesheet_check'
 
 workflow INPUT_CHECK {
     take:
-    samplesheet // file: /path/to/samplesheet.csv
+    samplesheet // file: /path/to/samplesheet.yaml
 
     main:
     SAMPLESHEET_CHECK ( samplesheet )
