@@ -1,12 +1,15 @@
-from copy import deepcopy
-from unittest import TestCase
-from pathlib import Path
-from bin.input_parser import validate_schema
-from bin.input_parser import InputParser
-from io import StringIO
-import yaml
 import json
 import tempfile
+from copy import deepcopy
+from io import StringIO
+from pathlib import Path
+from unittest import TestCase
+from unittest.mock import Mock
+
+import yaml
+
+from bin.input_parser import InputParser
+from bin.input_parser import validate_schema
 
 simple_json = '{"foo": {"bar": "value"}}'
 
@@ -39,7 +42,7 @@ class Test(TestCase):
         base_path = Path(__file__).parent
         self.schema_path = (base_path / "../assets/schema_input.json").resolve()
 
-    def test__validate_schema_valid_input(self):
+    def test__validate_schema__valid_input(self):
         yaml_stream = StringIO(deepcopy(sample_input))
         with open(self.schema_path, 'r') as schema_file:
             json_input = yaml.safe_load(yaml_stream)
@@ -48,7 +51,7 @@ class Test(TestCase):
         result, _ = validate_schema(json_input, json_schema)
         self.assertTrue(result)
 
-    def test__validate_schema_invalid_input_bed_regions(self):
+    def test__validate_schema__invalid_input_bed_regions(self):
         string_data = deepcopy(sample_input).replace("regions: /path3/regions.bed", "regions: wrong_extension.ext")
         yaml_stream = StringIO(string_data)
 
@@ -61,7 +64,7 @@ class Test(TestCase):
         self.assertEqual(message, "BED-3 file for capture regions must be provided, "
                                   "cannot contain spaces and must have extension '.bed'")
 
-    def test__validate_schema_invalid_missing_tracks(self):
+    def test__validate_schema__invalid_missing_tracks(self):
         yaml_stream = StringIO(deepcopy(sample_input))
 
         with open(self.schema_path, 'r') as schema_file:
@@ -93,3 +96,21 @@ class Test(TestCase):
             parser = InputParser(temp_file.name)
             parser._load_data()
         print(parser)
+
+    def test__check_reference__invalid_extension(self):
+        parser = Mock(spec=InputParser,
+                      reference={"type": "fasta", "value": "mm10.fasta"},
+                      VALID_REFERENCE=InputParser.VALID_REFERENCE)
+        with self.assertRaises(AssertionError) as contex:
+            InputParser._check_reference(parser)
+        self.assertEqual(str(contex.exception), 'The input file has an unrecognized extension: mm10.fasta. '
+                                                'It should be one of: .fq.gz, .fastq.gz, .fa')
+
+    def test__check_tracks__invalid_extension(self):
+        parser = Mock(spec=InputParser,
+                      tracks=[{"name": "Track 1", "path": "/path/track1.fa"}],
+                      VALID_TRACKS=InputParser.VALID_TRACKS)
+        with self.assertRaises(AssertionError) as contex:
+            InputParser._check_tracks(parser)
+        self.assertEqual(str(contex.exception), 'The input file has an unrecognized extension: /path/track1.fa. '
+                                                'It should be one of: .bed, .vcf, .bam')
