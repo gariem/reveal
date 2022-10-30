@@ -2,9 +2,11 @@ from copy import deepcopy
 from unittest import TestCase
 from pathlib import Path
 from bin.input_parser import validate_schema
+from bin.input_parser import InputParser
 from io import StringIO
 import yaml
 import json
+import tempfile
 
 simple_json = '{"foo": {"bar": "value"}}'
 
@@ -72,4 +74,22 @@ class Test(TestCase):
         self.assertTrue("tracks" in message)
         self.assertTrue("[] is too short" in message)
 
+    def test__check_schema(self):
+        yaml_stream = StringIO(deepcopy(sample_input))
 
+        with tempfile.NamedTemporaryFile('w', suffix='.yml') as temp_file:
+            temp_file.write(sample_input)
+            temp_file.flush()
+            parser = InputParser(temp_file.name)
+            validated_json = parser._check_schema()
+
+        sample_input_json = yaml.safe_load(yaml_stream)
+        self.assertEqual(validated_json, sample_input_json)
+
+    def test__load_data(self):
+        with tempfile.NamedTemporaryFile('w', suffix='.yml') as temp_file:
+            temp_file.write(sample_input)
+            temp_file.flush()
+            parser = InputParser(temp_file.name)
+            parser._load_data()
+        print(parser)
