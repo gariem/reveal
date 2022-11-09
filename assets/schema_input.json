@@ -16,14 +16,14 @@
                         },
                         "fasta": {
                             "type": "string",
-                            "pattern": "^\\S+\\.f(ast)?q\\.gz$",
+                            "pattern": "^\\S+\\.(fa|fasta|fastq|(.gz)?)$",
                             "errorMessage": "FastQ file for reference must be provided, cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
                         }
                     },
                     "oneOf": [
                         { "required": ["genome"] },
                         { "required": ["fasta"] }
-                    ]                    
+                    ]
                 },
                 "tracks": {
                     "type": "array",

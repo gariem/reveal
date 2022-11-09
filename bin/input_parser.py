@@ -2,9 +2,10 @@
 
 
 """Provide a command line tool to validate and transform tabular samplesheets."""
-
+import argparse
 import json
 import logging
+import sys
 from os import path
 from pathlib import Path
 
@@ -66,7 +67,7 @@ class InputParser:
         self.reference = {"type": reference_type, "value": reference_entry[reference_type]}
 
         for tracks_entry in validated_json['reveal']['tracks']:
-            self.tracks.append({tracks_entry['name']: tracks_entry['path']})
+            self.tracks.append({"name": tracks_entry['name'], "path": tracks_entry['path']})
 
         self.capture_regions = validated_json['reveal']['capture']['regions']
 
@@ -109,3 +110,55 @@ class InputParser:
         for track in self.tracks:
             validate_format(track['path'], self.VALID_TRACKS)
             check_file_exists(track['path'])
+
+    def _generate_igv_preferences(self):
+        with open("prefs.properties", "w") as properties:
+            for option in self.igv_options:
+                option, value = next(iter(option.items()))
+                properties.write(f"{option}={value}\n")
+
+    def _generate_tracks_
+
+    def build(self):
+        self._load_data()
+        self._check_schema()
+        self._check_reference()
+        self._check_regions()
+        self._check_tracks()
+        self._generate_igv_preferences()
+
+def parse_args(argv=None):
+    """Define and immediately parse command line arguments."""
+    parser = argparse.ArgumentParser(
+        description="Validate and transform samplesheet. Output files to same directory",
+        epilog="Example: python input_parser.py samplesheet.yaml",
+    )
+    parser.add_argument(
+        "file_in",
+        metavar="FILE_IN",
+        type=Path,
+        help="Input samplesheet in YAML format.",
+    )
+    parser.add_argument(
+        "-l",
+        "--log-level",
+        help="The desired log level (default WARNING).",
+        choices=("CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"),
+        default="WARNING",
+    )
+    return parser.parse_args(argv)
+
+
+def main(argv=None):
+    """Coordinate argument parsing and program execution."""
+    args = parse_args(argv)
+    logging.basicConfig(level=args.log_level, format="[%(levelname)s] %(message)s")
+    if not args.file_in.is_file():
+        logger.error(f"The given input file {args.file_in} was not found!")
+        sys.exit(2)
+    InputParser(args.file_in).build()
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+
