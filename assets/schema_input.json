@@ -16,7 +16,7 @@
                         },
                         "fasta": {
                             "type": "string",
-                            "pattern": "^\\S+\\.(fa|fasta|fastq|(.gz)?)$",
+                            "pattern": "^\\S+\\.(fa|fasta|fastq|)(.gz)?$",
                             "errorMessage": "FastQ file for reference must be provided, cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
                         }
                     },

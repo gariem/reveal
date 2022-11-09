@@ -49,7 +49,7 @@ class InputParser:
 
     VALID_TRACKS = (".bed", ".vcf", ".bam")
     VALID_REGIONS = ".bed"
-    VALID_REFERENCE = (".fq.gz", ".fastq.gz", ".fa")
+    VALID_REFERENCE = (".fq.gz", ".fastq.gz", ".fa", ".fa.gz")
 
     def __init__(self, input_file):
         self.input_file = input_file
@@ -111,13 +111,27 @@ class InputParser:
             validate_format(track['path'], self.VALID_TRACKS)
             check_file_exists(track['path'])
 
-    def _generate_igv_preferences(self):
+    def _generate_file_pointers(self, preferences_path, slops_path):
+        with open("reveal_params.csv", "w") as pointer:
+            pointer.write(f"reference,{self.reference['type']},{self.reference['value']}\n")
+            for track in self.tracks:
+                pointer.write(f"track,{track['name']},{track['path']}\n")
+            pointer.write(f"regions,{self.capture_regions}\n")
+            pointer.write(f"slops,{slops_path}\n")
+            pointer.write(f"preferences,{preferences_path}\n")
+
+    def _generate_slops_file(self):
+        with open("slops.txt", "w") as slops_file:
+            for slop in self.slops:
+                slops_file.write(f"{slop}\n")
+        return path.realpath(slops_file.name)
+
+    def _generate_igv_preferences_file(self):
         with open("prefs.properties", "w") as properties:
             for option in self.igv_options:
                 option, value = next(iter(option.items()))
                 properties.write(f"{option}={value}\n")
-
-    def _generate_tracks_
+        return path.realpath(properties.name)
 
     def build(self):
         self._load_data()
@@ -125,7 +139,9 @@ class InputParser:
         self._check_reference()
         self._check_regions()
         self._check_tracks()
-        self._generate_igv_preferences()
+        preferences_path = self._generate_igv_preferences_file()
+        slops_path = self._generate_slops_file()
+        self._generate_file_pointers(preferences_path, slops_path)
 
 def parse_args(argv=None):
     """Define and immediately parse command line arguments."""
