@@ -69,9 +69,11 @@ workflow REVEAL {
     INPUT_CHECK (
         ch_input
     )
+
     ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
 
-    INPUT_CHECK.out.reveal.groupTuple(by: 0).view()
+    INPUT_CHECK.out.reveal.tracks.view()
+//     INPUT_CHECK.out.reveal.groupTuple(by: 0).view()
 
     //
     // MODULE: Run FastQC

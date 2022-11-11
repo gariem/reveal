@@ -102,13 +102,13 @@ class InputParser:
 
     def _generate_file_pointers(self, preferences_path, slops_path):
         with open("reveal_params.csv", "w") as pointer:
-            pointer.write("entry_type,optional_label,value\n")
-            pointer.write(f"reference,,{self.reference}\n")
+            pointer.write("type,value,label\n")
+            pointer.write(f"reference,{self.reference}\n")
             for track in self.tracks:
-                pointer.write(f"track,{track['name']},{track['path']}\n")
-            pointer.write(f"regions,,{self.capture_regions}\n")
-            pointer.write(f"slops,,{slops_path}\n")
-            pointer.write(f"preferences,,{preferences_path}\n")
+                pointer.write(f"track,{track['path']},{track['name']}\n")
+            pointer.write(f"regions,{self.capture_regions}\n")
+            pointer.write(f"slops,{slops_path}\n")
+            pointer.write(f"preferences,{preferences_path}\n")
 
     def _generate_slops_file(self):
         with open("slops.txt", "w") as slops_file:

@@ -12,12 +12,44 @@ workflow INPUT_CHECK {
     SAMPLESHEET_CHECK ( samplesheet )
         .csv
         .splitCsv ( header:true, sep:',' )
-        .map { row ->
-            return tuple(row.entry_type, file(row.value), row.optional_label)
-         }
+        .map { row -> create_meta_channel(row) }
+        .collect()
+        .map { create_final_channel(it) }
         .set { reveal }
 
     emit:
-    reveal                                     // channel: [ entry_type, optional_label, file(path) ]
-    versions = SAMPLESHEET_CHECK.out.versions // channel: [ versions.yml ]
+    reveal                                      // channel:  [reference:val, regions:val, slops:val, preferences:val, tracks:[label:val, file:val]]
+    versions = SAMPLESHEET_CHECK.out.versions   // channel: [ versions.yml ]
+}
+
+def create_meta_channel(LinkedHashMap row) {
+    def meta = [:]
+    meta.type = row.type
+    if ( meta.type == "track" ) {
+        meta.label = row.label
+    }
+    meta.value = file(row.value)
+    return meta
+}
+
+def create_final_channel(collected_entries){
+    def meta = [:]
+    def tracks = []
+    for (entry in collected_entries){
+        switch(entry.type){
+            case "reference": meta.reference = entry.value
+                break;
+            case "regions": meta.regions = entry.value
+                break;
+            case "slops": meta.slops = entry.value
+                break;
+            case "preferences": meta.preferences = entry.value
+                break;
+            case "track":
+                tracks.add([label: entry.label, file: entry.value])
+                break;
+        }
+    }
+    meta.tracks = tracks
+    return meta
 }
