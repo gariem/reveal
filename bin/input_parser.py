@@ -51,9 +51,9 @@ class InputParser:
     VALID_REGIONS = ".bed"
     VALID_REFERENCE = (".fq.gz", ".fastq.gz", ".fa", ".fa.gz")
 
-    def __init__(self, input_file):
-        self.input_file = input_file
-        self.reference = {"type": "genome", "value": ""}
+    def __init__(self, params_file, reference):
+        self.params_file = params_file
+        self.reference = reference
         self.tracks = []
         self.capture_regions = None
         self.slops = []
@@ -61,10 +61,6 @@ class InputParser:
 
     def _load_data(self):
         validated_json = self._check_schema()
-
-        reference_entry = validated_json['reveal']['reference']
-        reference_type = 'genome' if 'genome' in reference_entry else 'fasta'
-        self.reference = {"type": reference_type, "value": reference_entry[reference_type]}
 
         for tracks_entry in validated_json['reveal']['tracks']:
             self.tracks.append({"name": tracks_entry['name'], "path": tracks_entry['path']})
@@ -81,8 +77,8 @@ class InputParser:
         base_path = Path(__file__).parent
         schema_path = (base_path / self.INPUT_SCHEMA).resolve()
 
-        with open(self.input_file, 'r') as input_file, open(schema_path, 'r') as schema_file:
-            json_input = yaml.safe_load(input_file)
+        with open(self.params_file, 'r') as params_file, open(schema_path, 'r') as schema_file:
+            json_input = yaml.safe_load(params_file)
             json_schema = json.load(schema_file)
             validation, message = validate_schema(json_input, json_schema)
 
@@ -91,15 +87,8 @@ class InputParser:
         return json_input
 
     def _check_reference(self):
-        ref_type = self.reference["type"]
-        ref_value = self.reference["value"]
-
-        if ref_type == "genome":
-            raise AssertionError(
-                f"iGenomes reference is not yet supported, "
-                f"please provide a full path to a vali ({', '.join(self.VALID_REFERENCE)}) file")
-        elif ref_type == "fasta":
-            validate_format(ref_value, self.VALID_REFERENCE)
+        validate_format(self.reference, self.VALID_REFERENCE)
+        if not self.reference.startswith("s3://"):
             check_file_exists(ref_value)
 
     def _check_regions(self):
@@ -114,12 +103,12 @@ class InputParser:
     def _generate_file_pointers(self, preferences_path, slops_path):
         with open("reveal_params.csv", "w") as pointer:
             pointer.write("entry_type,optional_label,value\n")
-            pointer.write(f"reference,{self.reference['type']},{self.reference['value']}\n")
+            pointer.write(f"reference,,{self.reference}\n")
             for track in self.tracks:
                 pointer.write(f"track,{track['name']},{track['path']}\n")
-            pointer.write(f"regions,-,{self.capture_regions}\n")
-            pointer.write(f"slops,-,{slops_path}\n")
-            pointer.write(f"preferences,-,{preferences_path}\n")
+            pointer.write(f"regions,,{self.capture_regions}\n")
+            pointer.write(f"slops,,{slops_path}\n")
+            pointer.write(f"preferences,,{preferences_path}\n")
 
     def _generate_slops_file(self):
         with open("slops.txt", "w") as slops_file:
@@ -157,6 +146,11 @@ def parse_args(argv=None):
         help="Input samplesheet in YAML format.",
     )
     parser.add_argument(
+        "reference",
+        metavar="REFERENCE",
+        help="Reference file (fasta or igenomes).",
+    )
+    parser.add_argument(
         "-l",
         "--log-level",
         help="The desired log level (default WARNING).",
@@ -173,7 +167,7 @@ def main(argv=None):
     if not args.file_in.is_file():
         logger.error(f"The given input file {args.file_in} was not found!")
         sys.exit(2)
-    InputParser(args.file_in).build()
+    InputParser(args.file_in, args.reference).build()
 
 
 if __name__ == "__main__":

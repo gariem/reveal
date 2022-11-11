@@ -18,7 +18,7 @@ process SAMPLESHEET_CHECK {
     script: // This script is bundled with the pipeline, in nf-core/reveal/bin/
     """
     input_parser.py \\
-        $samplesheet
+        $samplesheet ${params.fasta}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

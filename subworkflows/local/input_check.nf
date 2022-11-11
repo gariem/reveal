@@ -13,7 +13,7 @@ workflow INPUT_CHECK {
         .csv
         .splitCsv ( header:true, sep:',' )
         .map { row ->
-            return tuple(row.entry_type, row.optional_label, file(row.value))
+            return tuple(row.entry_type, file(row.value), row.optional_label)
          }
         .set { reveal }
 

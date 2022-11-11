@@ -20,8 +20,6 @@ simple_yaml = '''
 
 sample_input = """
     reveal:
-      reference:
-        genome: "mm10.fasta"
       tracks:
         - name: "Sample BAM 1"
           path: /path1/sample1.bam
@@ -83,7 +81,7 @@ class Test(TestCase):
         with tempfile.NamedTemporaryFile('w', suffix='.yml') as temp_file:
             temp_file.write(sample_input)
             temp_file.flush()
-            parser = InputParser(temp_file.name)
+            parser = InputParser(temp_file.name, "s3://ref/path")
             validated_json = parser._check_schema()
 
         sample_input_json = yaml.safe_load(yaml_stream)
@@ -93,18 +91,24 @@ class Test(TestCase):
         with tempfile.NamedTemporaryFile('w', suffix='.yml') as temp_file:
             temp_file.write(sample_input)
             temp_file.flush()
-            parser = InputParser(temp_file.name)
+            parser = InputParser(temp_file.name, "/sample/reference/path.fa")
             parser._load_data()
         print(parser)
 
     def test__check_reference__invalid_extension(self):
         parser = Mock(spec=InputParser,
-                      reference={"type": "fasta", "value": "mm10.fasta"},
+                      reference="mm10.fasta",
                       VALID_REFERENCE=InputParser.VALID_REFERENCE)
         with self.assertRaises(AssertionError) as contex:
             InputParser._check_reference(parser)
-        self.assertEqual(str(contex.exception), 'The input file has an unrecognized extension: mm10.fasta. '
-                                                'It should be one of: .fq.gz, .fastq.gz, .fa')
+        self.assertEqual('The input file has an unrecognized extension: mm10.fasta. '
+                         'It should be one of: .fq.gz, .fastq.gz, .fa, .fa.gz', str(contex.exception))
+
+    def test__check_reference__s3path(self):
+        parser = Mock(spec=InputParser,
+                      reference="s3://ngi-igenomes/igenomes/test_genome.fa",
+                      VALID_REFERENCE=InputParser.VALID_REFERENCE)
+        InputParser._check_reference(parser)
 
     def test__check_tracks__invalid_extension(self):
         parser = Mock(spec=InputParser,

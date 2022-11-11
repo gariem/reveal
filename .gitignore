@@ -8,3 +8,4 @@ testing*
 *.pyc
 .idea
 null/
+pipeline_info/
