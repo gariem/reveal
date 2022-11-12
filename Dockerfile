@@ -14,6 +14,7 @@ SHELL ["/bin/bash", "--login", "-c"]
 
 RUN apt-get update && apt-get install -y wget git build-essential autoconf  \
     zlib1g-dev libbz2-dev liblzma-dev libcurl4-gnutls-dev libncurses5-dev \
+    bedtools \
     xvfb xorg x11-utils
 
 RUN wget https://data.broadinstitute.org/igv/projects/downloads/2.12/IGV_Linux_2.12.2_WithJava.zip -O IGV_Linux_2.12.2_WithJava.zip && \
@@ -38,5 +39,3 @@ RUN git clone -b 1.13 https://github.com/samtools/bcftools.git && \
 RUN git clone -b 1.13 https://github.com/samtools/samtools.git && \
     cd samtools && autoheader && autoconf && ./configure && make -j `nproc` && make install && \
     cd .. && rm -rf samtools
-
-RUN apt-get update && apt-get install -y bedtools

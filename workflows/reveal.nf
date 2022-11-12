@@ -79,7 +79,7 @@ workflow REVEAL {
         INPUT_CHECK.out.reveal.slops
     )
 
-//     PREPARE_TRACKS.out.filtered_alignment.view()
+    PREPARE_TRACKS.out.filtered_alignments.view()
 
     ch_versions = ch_versions.mix(PREPARE_TRACKS.out.versions.first())
 
@@ -90,7 +90,7 @@ workflow REVEAL {
 //     )
 //     ch_versions = ch_versions.mix(FASTQC.out.versions.first())
 
-    ch_versions.view()
+
 
     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions.unique().collectFile(name: 'collated_versions.yml')

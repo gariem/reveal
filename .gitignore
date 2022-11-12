@@ -10,3 +10,5 @@ testing*
 null/
 pipeline_info/
 filter/
+*.log
+*.log.*
