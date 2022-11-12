@@ -6,6 +6,10 @@ reveal:
       path: /home/egarcia/data/DBA_2J.10.ilumina.bam
     - name: "Pacbio reads"
       path: /home/egarcia/data/DBA_2J.10.pacbio.bam
+    - name: "Test Regions"
+      path: /home/egarcia/data/test_regions.bed
+    - name: "PBSV Calls"
+      path: /home/egarcia/data/DBA_2J-pbsv.vcf
   capture:
     regions: /home/egarcia/data/test_regions.bed
     slops: [50, 500]
@@ -22,3 +26,4 @@ reveal:
         value: "0,0,1920,1080"
       - option: "DETAILS_BEHAVIOR"
         value: "CLICK"
+

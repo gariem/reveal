@@ -79,7 +79,7 @@ workflow REVEAL {
         INPUT_CHECK.out.reveal.slops
     )
 
-    PREPARE_TRACKS.out.filtered_alignments.view()
+    PREPARE_TRACKS.out.tracks.view()
 
     ch_versions = ch_versions.mix(PREPARE_TRACKS.out.versions.first())
 
