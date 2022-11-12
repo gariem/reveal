@@ -6,8 +6,6 @@ process SAMPLESHEET_CHECK {
         'https://depot.galaxyproject.org/singularity/python:3.8.3' :
         'docker.io/raphsoft/reveal:1.0' }"
 
-    echo true
-
     input:
     path samplesheet
 

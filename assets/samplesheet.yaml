@@ -7,7 +7,7 @@ reveal:
     - name: "Pacbio reads"
       path: /home/egarcia/data/DBA_2J.10.pacbio.bam
   capture:
-    regions: /home/egarcia/data/DBA_2J.INS.ready.bed
+    regions: /home/egarcia/data/test_regions.bed
     slops: [50, 500]
     igvOptions:
       - option: "SKIP_VERSION"

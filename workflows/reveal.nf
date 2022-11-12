@@ -36,6 +36,7 @@ if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input sample
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
 //
 include { INPUT_CHECK } from '../subworkflows/local/input_check'
+include { PREPARE_TRACKS } from '../subworkflows/local/prepare_regions'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -72,16 +73,24 @@ workflow REVEAL {
 
     ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
 
-    INPUT_CHECK.out.reveal.tracks.view()
-//     INPUT_CHECK.out.reveal.groupTuple(by: 0).view()
+    PREPARE_TRACKS (
+        INPUT_CHECK.out.reveal.tracks,
+        INPUT_CHECK.out.reveal.regions,
+        INPUT_CHECK.out.reveal.slops
+    )
 
-    //
+//     PREPARE_TRACKS.out.filtered_alignment.view()
+
+    ch_versions = ch_versions.mix(PREPARE_TRACKS.out.versions.first())
+
     // MODULE: Run FastQC
     //
 //     FASTQC (
 //         INPUT_CHECK.out.reads
 //     )
 //     ch_versions = ch_versions.mix(FASTQC.out.versions.first())
+
+    ch_versions.view()
 
     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions.unique().collectFile(name: 'collated_versions.yml')

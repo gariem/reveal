@@ -4,3 +4,12 @@ input/
 work/
 .idea/
 .nextflow/
+*.log
+*.log.*
+modules/
+.github/
+lib/
+bin/
+conf/
+modules/
+pipeline_info/
