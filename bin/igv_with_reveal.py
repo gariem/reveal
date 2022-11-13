@@ -2,7 +2,6 @@
 
 import argparse
 import logging
-from pathlib import Path
 import sys
 
 logger = logging.getLogger()
@@ -35,13 +34,73 @@ class IGVSessionBuilder:
 
     def build(self):
         self._check_tracks()
-        xml_data = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n'
-        xml_data += f'<Session genome="{self.reference}" hasGeneTrack="false" hasSequenceTrack="true" version="8">\n'
-        xml_data += '\t<Resources>\n'
+        xml_data = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n' \
+                   f'<Session genome="{self.reference}" hasGeneTrack="false" hasSequenceTrack="true" version="8">\n' \
+                   '\t<Resources>\n'
         for track in self.tracks:
             xml_data += f'\t\t<Resource path="{track.path}"/>\n'
         xml_data += '\t</Resources>\n'
-        xml_data += '</Session>\n'
+
+        panel_num = 1
+        panel_factors = [0]
+
+        bam_factor = 20
+        vcf_factor = 4
+        contigs_factor = 6
+        sequence_factor = 2
+        other_factor = 5
+
+        xml_data += f'\t<Panel name="Panel_{panel_num}">\n'
+        xml_data += f'\t\t<Track attributeKey="Reference sequence" clazz="org.broad.igv.track.SequenceTrack" ' \
+                    f'fontSize="10" id="Reference sequence" name="Reference sequence" sequenceTranslationStrandValue="POSITIVE" ' \
+                    f'shouldShowTranslation="true" visible="true"/>\n'
+        factor = sequence_factor
+        for track in self.tracks:
+            if track.path.endswith(".vcf"):
+                xml_data += f'\t\t<Track attributeKey="{track.label}" clazz="org.broad.igv.variant.VariantTrack" colorScale="ContinuousColorScale;0.0;0.0;255,255,255;0,0,178" ' \
+                            f'displayMode="EXPANDED" fontSize="10" groupByStrand="false" id="{track.path}" name="{track.label}" ' \
+                            f'siteColorMode="ALLELE_FREQUENCY" squishedHeight="1" visible="true"/>\n'
+
+                panel_num += 1
+                factor += vcf_factor
+        panel_factors.append(panel_factors[-1] + factor)
+
+        xml_data += f'\t</Panel>\n'
+
+        for track in self.tracks:
+            if track.path.endswith(".bam"):
+                xml_data += f'\t<Panel name="Panel_{panel_num}">\n' \
+                            f'\t\t<Track attributeKey="{track.label} Coverage" autoScale="true" clazz="org.broad.igv.sam.CoverageTrack" color="175,175,175" ' \
+                            f'colorScale="ContinuousColorScale;0.0;60.0;255,255,255;175,175,175" fontSize="10" id="{track.path}_coverage" name="{track.label} Coverage" ' \
+                            f'snpThreshold="0.2" visible="true">\n' \
+                            f'\t\t\t<DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="13.0" minimum="0.0" type="LINEAR"/>\n' \
+                            f'\t\t</Track>\n' \
+                            f'\t\t<Track attributeKey="{track.label}" clazz="org.broad.igv.sam.AlignmentTrack" displayMode="COLLAPSED" ' \
+                            f'experimentType="THIRD_GEN" fontSize="10" id="{track.path}" name="{track.label}" visible="true">\n' \
+                            f'\t\t\t<RenderOptions/>\n' \
+                            f'\t\t</Track>\n' \
+                            f'\t</Panel>\n'
+                panel_num += 1
+                if "contigs" in track.label.lower():
+                    panel_factors.append(panel_factors[-1] + contigs_factor)
+                else:
+                    panel_factors.append(panel_factors[-1] + bam_factor)
+
+        xml_data += f'\t<Panel name="Panel_{panel_num}">\n'
+
+        factor = 0
+        for track in self.tracks:
+            if not track.path.endswith(".bam") and not track.path.endswith(".vcf"):
+                xml_data += f'\t\t<Track attributeKey="{track.label}" clazz="org.broad.igv.track.FeatureTrack" colorScale="ContinuousColorScale;0.0;0.0;255,255,255;0,0,178" ' \
+                            f'fontSize="10" groupByStrand="false" id="{track.path}" name="{track.label}" visible="true"/>\n'
+                panel_num += 1
+                factor += other_factor
+        panel_factors.append(panel_factors[-1] + factor)
+
+        factors_values = ','.join([str(factor / panel_factors[-1]) for factor in panel_factors])
+        xml_data += f'\t</Panel>\n' \
+                    f'<PanelLayout dividerFractions="{factors_values}"/>\n' \
+                    f'</Session>\n'
 
         print(xml_data)
 
@@ -52,7 +111,7 @@ class SnapshotsCommandBuilder:
         self.slops = slops
 
     def build(self):
-        return f"(regions={self.regions }, slops={self.slops})"
+        return f"(regions={self.regions}, slops={self.slops})"
 
 
 def parse_args(argv=None):
