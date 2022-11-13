@@ -1,4 +1,5 @@
 process FILTER_BAM_REGIONS {
+
     tag "$samplesheet"
 
     conda (params.enable_conda ? "conda-forge::python=3.8.3" : null)
@@ -28,6 +29,7 @@ process FILTER_BAM_REGIONS {
 }
 
 process FILTER_VCF_REGIONS {
+
     tag "$samplesheet"
 
     conda (params.enable_conda ? "conda-forge::python=3.8.3" : null)

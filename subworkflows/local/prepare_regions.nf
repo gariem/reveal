@@ -1,4 +1,3 @@
-
 include { EXPAND_REGIONS } from '../../modules/local/expand_regions'
 include { FILTER_BAM_REGIONS } from '../../modules/local/filter_regions'
 include { FILTER_VCF_REGIONS } from '../../modules/local/filter_regions'

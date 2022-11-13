@@ -11,8 +11,8 @@ reveal:
     - name: "PBSV Calls"
       path: /home/egarcia/data/DBA_2J-pbsv.vcf
   capture:
-    regions: /home/egarcia/data/test_regions.bed
-    slops: [50, 500]
+    regions: /home/egarcia/data/test_regions_small.bed
+    slops: [50, 100, 500, 1000]
     igvOptions:
       - option: "SKIP_VERSION"
         value: "null,2.12.2"

@@ -90,7 +90,7 @@ class InputParser:
     def _check_reference(self):
         validate_format(self.reference, self.VALID_REFERENCE)
         if not self.reference.startswith("s3://"):
-            check_file_exists(ref_value)
+            check_file_exists(self.reference)
 
     def _check_regions(self):
         validate_format(self.capture_regions, self.VALID_REGIONS)

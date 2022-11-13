@@ -39,3 +39,5 @@ RUN git clone -b 1.13 https://github.com/samtools/bcftools.git && \
 RUN git clone -b 1.13 https://github.com/samtools/samtools.git && \
     cd samtools && autoheader && autoconf && ./configure && make -j `nproc` && make install && \
     cd .. && rm -rf samtools
+
+ENV PATH="$PATH:/IGV_Linux_2.12.2/jdk-11/bin"

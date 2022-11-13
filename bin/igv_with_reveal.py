@@ -3,6 +3,7 @@
 import argparse
 import logging
 import sys
+import csv
 
 logger = logging.getLogger()
 
@@ -106,12 +107,21 @@ class IGVSessionBuilder:
 
 
 class SnapshotsCommandBuilder:
-    def __init__(self, bed_file, slops):
+    def __init__(self, bed_file, slops, out_dir):
         self.regions = bed_file
         self.slops = slops
+        self.out_dir = out_dir
 
     def build(self):
-        return f"(regions={self.regions}, slops={self.slops})"
+        batch_command = f'snapshotDirectory {self.out_dir}\n'
+
+        with open(self.regions, 'r') as regions_file:
+            for region in csv.reader(regions_file, delimiter='\t'):
+                for value in self.slops:
+                    batch_command += f'goto {region[0]}:{int(region[1])-value}-{int(region[2])+value}\n' \
+                                     f'snapshot {region[0]}_{region[1]}_{region[2]}_slop{value}.png\n'
+
+        print(batch_command)
 
 
 def parse_args(argv=None):
@@ -159,6 +169,12 @@ def parse_args(argv=None):
         help="Slops"
     )
 
+    batch_parser.add_argument(
+        "--snapshots_dir",
+        type=str,
+        help="Output directory for snapshots"
+    )
+
     return parser.parse_args(argv)
 
 
@@ -171,7 +187,7 @@ def main(argv=None):
         IGVSessionBuilder(args.reference, args.tracks_with_labels).build()
 
     if args.command == "build-batch":
-        SnapshotsCommandBuilder(args.regions, args.slops).build()
+        SnapshotsCommandBuilder(args.regions, args.slops, args.snapshots_dir).build()
 
 
 if __name__ == "__main__":
