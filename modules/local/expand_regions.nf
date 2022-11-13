@@ -22,7 +22,6 @@ process EXPAND_REGIONS {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        python: \$(python --version | sed 's/Python //g')
         bedtools: \$(bedtools --version | sed 's/bedtools //g')
     END_VERSIONS
     """

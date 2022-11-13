@@ -22,7 +22,6 @@ process FILTER_BAM_REGIONS {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        python: \$(python --version | sed 's/Python //g')
         samtools: \$(samtools --version | sed 's/samtools //g' | head -1)
     END_VERSIONS
     """
@@ -52,7 +51,6 @@ process FILTER_VCF_REGIONS {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        python: \$(python --version | sed 's/Python //g')
         bedtools: \$(bedtools --version | sed 's/bedtools //g')
     END_VERSIONS
     """

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 
-"""Provide a command line tool to validate and transform tabular samplesheets."""
+"""Provide a command line tool to validate and transform yml samplesheets."""
 import argparse
 import json
 import logging
@@ -44,6 +44,7 @@ class InputParser:
     Define a service that can validate and transform the input yaml containing tracks, regions, and options.
 
     """
+
     INPUT_SCHEMA = "../assets/schema_input.json"
     IGENOMES_CONFIG = "../conf/igenomes.config"
 
@@ -140,14 +141,12 @@ def parse_args(argv=None):
         epilog="Example: python input_parser.py samplesheet.yaml",
     )
     parser.add_argument(
-        "file_in",
-        metavar="FILE_IN",
+        "--file_in",
         type=Path,
         help="Input samplesheet in YAML format.",
     )
     parser.add_argument(
-        "reference",
-        metavar="REFERENCE",
+        "--reference",
         help="Reference file (fasta or igenomes).",
     )
     parser.add_argument(

@@ -36,7 +36,7 @@ workflow PREPARE_TRACKS {
     .set { filtered_vcf }
 
     emit:
-    tracks = filtered_vcf.concat(filtered_bam).concat(track_files.other)   // channel:  [alignment.filtered.bam]
-    versions = FILTER_BAM_REGIONS.out.versions   // channel: [ versions.yml ]
+    tracks = filtered_vcf.concat(filtered_bam).concat(track_files.other)   // channel:  [alignment.filtered.(bam|vcf|bed)]
+    versions = EXPAND_REGIONS.out.versions.concat(FILTER_BAM_REGIONS.out.versions).concat(FILTER_VCF_REGIONS.out.versions)   // channel: [ versions.yml ]
 
 }

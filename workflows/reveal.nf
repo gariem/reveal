@@ -81,7 +81,7 @@ workflow REVEAL {
 
     PREPARE_TRACKS.out.tracks.view()
 
-    ch_versions = ch_versions.mix(PREPARE_TRACKS.out.versions.first())
+    ch_versions = ch_versions.mix(PREPARE_TRACKS.out.versions)
 
     // MODULE: Run FastQC
     //
