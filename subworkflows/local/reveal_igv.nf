@@ -53,7 +53,6 @@ workflow SNAPSHOTS {
     )
 
     emit:
-//     snapshots =[]
     snapshots = IGV_SNAPSHOTS.out.captures
     versions = IGV_SNAPSHOTS.out.versions
 }

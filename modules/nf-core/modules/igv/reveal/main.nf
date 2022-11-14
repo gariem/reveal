@@ -64,7 +64,7 @@ process IGV_SNAPSHOTS {
 
     ls *.bam | xargs -n1 -P5 samtools index
 
-    xvfb-run --auto-servernum -s "-screen 0 1920x1080x24" java -Xmx4000m \
+    xvfb-run --auto-servernum -s "-screen 0 1920x1080x24" java -Xmx32000m \
         --module-path=/IGV_Linux_2.12.2/lib \
         --module=org.igv/org.broad.igv.ui.Main -b snapshots.txt -o $igv_preferences
 
