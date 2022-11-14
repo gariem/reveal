@@ -4,7 +4,7 @@ process EXPAND_REGIONS {
 
     conda (params.enable_conda ? "conda-forge::python=3.8.3" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/python:3.8.3' :
+        'https://github.com/gariem/singularity-reveal/releases/download/22.11.14/gariem-singularity-reveal.latest.sif' :
         'docker.io/raphsoft/reveal:1.0' }"
 
     input:

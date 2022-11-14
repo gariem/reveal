@@ -69,11 +69,15 @@ workflow REVEAL {
         INPUT_CHECK.out.reveal.slops
     )
 
+    ch_versions = ch_versions.mix(PREPARE_TRACKS.out.versions)
+
     PREPARE_IGV_FILES (
         PREPARE_TRACKS.out.tracks,
         INPUT_CHECK.out.reveal.regions,
         INPUT_CHECK.out.reveal.slops
     )
+
+    ch_versions = ch_versions.mix(PREPARE_IGV_FILES.out.versions)
 
     SNAPSHOTS (
         PREPARE_TRACKS.out.tracks,
@@ -82,12 +86,11 @@ workflow REVEAL {
         INPUT_CHECK.out.reveal.preferences
     )
 
-    ch_versions = ch_versions.mix(PREPARE_TRACKS.out.versions)
+    ch_versions = ch_versions.mix(SNAPSHOTS.out.versions)
 
     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions.unique().collectFile(name: 'collated_versions.yml')
     )
-
 
     workflow_summary    = WorkflowReveal.paramsSummaryMultiqc(workflow, summary_params)
     ch_workflow_summary = Channel.value(workflow_summary)
