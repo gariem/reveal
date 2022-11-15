@@ -25,7 +25,7 @@ workflow INPUT_CHECK {
 def create_meta_channel(LinkedHashMap row) {
     def meta = [:]
     meta.type = row.type
-    if ( meta.type == "track" ) {
+    if ( meta.type == "track" || meta.type == "region" ) {
         meta.label = row.label
     }
     meta.value = file(row.value)
@@ -35,11 +35,13 @@ def create_meta_channel(LinkedHashMap row) {
 def create_final_channel(collected_entries){
     def meta = [:]
     def tracks = []
+    def regions = []
     for (entry in collected_entries){
         switch(entry.type){
             case "reference": meta.reference = entry.value
                 break;
-            case "regions": meta.regions = entry.value
+            case "region":
+                regions.add([prefix: entry.label, file: entry.value])
                 break;
             case "slops": meta.slops = entry.value
                 break;
@@ -51,5 +53,6 @@ def create_final_channel(collected_entries){
         }
     }
     meta.tracks = tracks
+    meta.regions = regions
     return meta
 }

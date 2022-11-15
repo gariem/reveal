@@ -24,7 +24,9 @@ sample_input = """
         - name: "Sample BAM 1"
           path: /path1/sample1.bam
       capture:
-        regions: /path3/regions.bed
+        regions:
+            - path: /path3/regions.bed
+              prefix: "TEST_"
         slops: [50, 500]
         igvOptions:
           - option: "SKIP_VERSION"
@@ -50,7 +52,7 @@ class Test(TestCase):
         self.assertTrue(result)
 
     def test__validate_schema__invalid_input_bed_regions(self):
-        string_data = deepcopy(sample_input).replace("regions: /path3/regions.bed", "regions: wrong_extension.ext")
+        string_data = deepcopy(sample_input).replace("/path3/regions.bed", "wrong_extension.ext")
         yaml_stream = StringIO(string_data)
 
         with open(self.schema_path, 'r') as schema_file:

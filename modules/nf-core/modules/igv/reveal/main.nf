@@ -9,22 +9,27 @@ process GENERATE_IGV_FILES {
 
     input:
     val tracks_with_labels // String: [label1:path1, label2:path2]
-    path bed_regions
+    val regions_with_prefixes
+    path actual_regions
     path slops
 
     output:
     path 'igv.session.xml'    , emit: session
-    path 'batch.txt'    , emit: batch
+    path 'snapshots_*.txt'    , emit: batch
     path "versions.yml" , emit: versions
 
     script: // This script is bundled with the pipeline, in nf-core/reveal/bin/
     tracks_param=tracks_with_labels.toString().replace("[", "").replace("]", "").replace("," ,"")
+    regions_param=regions_with_prefixes.toString().replace("[", "").replace("]", "").replace("," ,"")
     """
-    igv_with_reveal.py build-session --reference=${file(params.fasta).name} \
+    igv_with_reveal.py build-session \
+        --reference=${file(params.fasta).name} \
         --tracks_with_labels $tracks_param > igv.session.xml
 
-    igv_with_reveal.py build-batch --regions=$bed_regions --slops \$(cat $slops | xargs) \
-        --snapshots_dir=captures > batch.txt
+    igv_with_reveal.py build-batch \
+        --regions_with_prefixes $regions_param \
+        --slops \$(cat $slops | xargs) \
+        --snapshots_dir=captures
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

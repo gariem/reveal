@@ -11,15 +11,17 @@ reveal:
     - name: "PBSV Calls"
       path: /home/egarcia/data/DBA_2J-pbsv.vcf
   capture:
-    regions: /home/egarcia/data/test_regions_small.bed
+    regions:
+      - path: /home/egarcia/data/test_regions_small1.bed
+        prefix: "SMALL1_"
+      - path: /home/egarcia/data/test_regions_small2.bed
+        prefix: "SMALL2_"
     slops: [50, 100, 500, 1000]
     igvOptions:
       - option: "SKIP_VERSION"
         value: "null,2.12.2"
       - option: "SHOW_SEQUENCE_TRANSLATION"
         value: "true"
-      - option: "IGV.Bounds"
-        value: "129,85,2243,1263"
       - option: "SAM.SHOW_SOFT_CLIPPED"
         value: "true"
       - option: "IGV.Bounds"

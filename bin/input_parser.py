@@ -56,7 +56,7 @@ class InputParser:
         self.params_file = params_file
         self.reference = reference
         self.tracks = []
-        self.capture_regions = None
+        self.capture_regions = []
         self.slops = []
         self.igv_options = []
 
@@ -64,9 +64,10 @@ class InputParser:
         validated_json = self._check_schema()
 
         for tracks_entry in validated_json['reveal']['tracks']:
-            self.tracks.append({"name": tracks_entry['name'], "path": tracks_entry['path']})
+            self.tracks.append({"name": tracks_entry.get('name'), "path": tracks_entry['path']})
 
-        self.capture_regions = validated_json['reveal']['capture']['regions']
+        for region_entry in validated_json['reveal']['capture']['regions']:
+            self.capture_regions.append({"prefix": region_entry.get('prefix', ''), "path": region_entry['path']})
 
         for option_slop in validated_json['reveal']['capture']['slops']:
             self.slops.append(option_slop)
@@ -93,8 +94,9 @@ class InputParser:
             check_file_exists(self.reference)
 
     def _check_regions(self):
-        validate_format(self.capture_regions, self.VALID_REGIONS)
-        check_file_exists(self.capture_regions)
+        for region in self.capture_regions:
+            validate_format(region['path'], self.VALID_REGIONS)
+            check_file_exists(region['path'])
 
     def _check_tracks(self):
         for track in self.tracks:
@@ -107,7 +109,8 @@ class InputParser:
             pointer.write(f"reference,{self.reference}\n")
             for track in self.tracks:
                 pointer.write(f"track,{track['path']},{track['name']}\n")
-            pointer.write(f"regions,{self.capture_regions}\n")
+            for region in self.capture_regions:
+                pointer.write(f"region,{region['path']},{region['prefix']}\n")
             pointer.write(f"slops,{slops_path}\n")
             pointer.write(f"preferences,{preferences_path}\n")
 

@@ -5,7 +5,7 @@ workflow PREPARE_IGV_FILES {
 
     take:
     tracks // tuple: (label, file)
-    regions // file: /path/to/regions.bed
+    regions // tuple(prefix, file)
     slops // file: /path/to/slops.txt
 
     main:
@@ -15,9 +15,22 @@ workflow PREPARE_IGV_FILES {
     .collect()
     .set { local_labeled_files }
 
+    regions.map{ entry ->
+        return entry[0] + ":" + entry[1].name
+    }
+    .collect()
+    .set { local_prefixed_regions }
+
+    regions.map{ entry ->
+        return entry[1]
+    }
+    .collect()
+    .set { all_region_files }
+
     GENERATE_IGV_FILES (
         local_labeled_files,
-        regions,
+        local_prefixed_regions,
+        all_region_files,
         slops
     )
 

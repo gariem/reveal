@@ -4,6 +4,8 @@ import argparse
 import logging
 import sys
 import csv
+import random
+import string
 
 logger = logging.getLogger()
 
@@ -107,21 +109,34 @@ class IGVSessionBuilder:
 
 
 class SnapshotsCommandBuilder:
-    def __init__(self, bed_file, slops, out_dir):
-        self.regions = bed_file
+
+    def __init__(self, prefixed_bed_files, slops, out_dir):
+        self.prefixed_bed_files = prefixed_bed_files
+        self.regions = []
         self.slops = slops
         self.out_dir = out_dir
 
+    def _check_regions(self):
+        for prefixed_bed_file in self.prefixed_bed_files:
+            prefix, path = prefixed_bed_file.split(":")
+            self.regions.append(Track(prefix, path))
+
     def build(self):
-        batch_command = f'snapshotDirectory {self.out_dir}\n'
+        self._check_regions()
 
-        with open(self.regions, 'r') as regions_file:
-            for region in csv.reader(regions_file, delimiter='\t'):
-                for value in self.slops:
-                    batch_command += f'goto {region[0]}:{int(region[1])-value}-{int(region[2])+value}\n' \
-                                     f'snapshot {region[0]}_{region[1]}_{region[2]}_slop{value}.png\n'
+        for track in self.regions:
+            batch_command = f'snapshotDirectory {self.out_dir}\n'
+            with open(track.path, 'r') as regions_file:
+                for region in csv.reader(regions_file, delimiter='\t'):
+                    for value in self.slops:
+                        batch_command += f'goto {region[0]}:{int(region[1])-value}-{int(region[2])+value}\n' \
+                                         f'snapshot {track.label}{region[0]}_{region[1]}_{region[2]}_slop{value}.png\n'
 
-        print(batch_command)
+            if not track.label:
+                track.label = ''.join(random.choice(string.ascii_lowercase) for i in range(6))
+
+            with open('snapshots_' + track.label + '.txt', 'w') as batch_file:
+                batch_file.write(batch_command)
 
 
 def parse_args(argv=None):
@@ -142,33 +157,29 @@ def parse_args(argv=None):
     subparsers = parser.add_subparsers(help='Command to execute', dest='command')
 
     session_parser = subparsers.add_parser("build-session")
-    batch_parser = subparsers.add_parser("build-batch")
-
     session_parser.add_argument(
         "--reference",
         type=str,
         help="Reference file"
     )
-
     session_parser.add_argument(
         "--tracks_with_labels",
         nargs='+',
-        help="Track files, comma separated"
+        help="Track files, space separated"
     )
 
+    batch_parser = subparsers.add_parser("build-batch")
     batch_parser.add_argument(
-        "--regions",
-        type=str,
-        help="Regions file (bed-3)"
+        "--regions_with_prefixes",
+        nargs='+',
+        help="Regions files (bed-3), space separated"
     )
-
     batch_parser.add_argument(
         "--slops",
         type=int,
         nargs='+',
         help="Slops"
     )
-
     batch_parser.add_argument(
         "--snapshots_dir",
         type=str,
@@ -187,7 +198,7 @@ def main(argv=None):
         IGVSessionBuilder(args.reference, args.tracks_with_labels).build()
 
     if args.command == "build-batch":
-        SnapshotsCommandBuilder(args.regions, args.slops, args.snapshots_dir).build()
+        SnapshotsCommandBuilder(args.regions_with_prefixes, args.slops, args.snapshots_dir).build()
 
 
 if __name__ == "__main__":

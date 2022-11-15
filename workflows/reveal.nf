@@ -73,7 +73,7 @@ workflow REVEAL {
 
     PREPARE_IGV_FILES (
         PREPARE_TRACKS.out.tracks,
-        INPUT_CHECK.out.reveal.regions,
+        PREPARE_TRACKS.out.prefixed_regions,
         INPUT_CHECK.out.reveal.slops
     )
 
@@ -86,8 +86,6 @@ workflow REVEAL {
         INPUT_CHECK.out.reveal.preferences
     )
 
-    ch_versions = ch_versions.mix(SNAPSHOTS.out.versions)
-
     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions.unique().collectFile(name: 'collated_versions.yml')
     )
@@ -98,7 +96,7 @@ workflow REVEAL {
 }
 
 /*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ó~~~~~~~
     COMPLETION EMAIL AND SUMMARY
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
