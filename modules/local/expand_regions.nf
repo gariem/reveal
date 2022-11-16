@@ -1,4 +1,4 @@
-process SAMPLESHEET_CHECK {
+process EXPAND_REGIONS {
 
     tag "$samplesheet"
 
@@ -8,19 +8,21 @@ process SAMPLESHEET_CHECK {
         'docker.io/raphsoft/reveal:1.0' }"
 
     input:
-    path samplesheet
+    file regions
+    file slops
 
     output:
-    path '*.csv'       , emit: csv
+    path "expanded_regions.bed", emit: expanded_regions
     path "versions.yml", emit: versions
 
-    script: // This script is bundled with the pipeline, in nf-core/reveal/bin/
+    script:
     """
-    input_parser.py --file_in=$samplesheet --reference=${params.fasta}
+    max_slop="\$(cat $slops | sort -rn | head -1)"
+    awk -v window=\$max_slop -F"\\t" 'BEGIN {OFS=FS}{print \$1,\$2-window,\$3+window}' $regions  | bedtools sort | bedtools merge > expanded_regions.bed
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        python: \$(python --version | sed 's/Python //g')
+        bedtools: \$(bedtools --version | sed 's/bedtools //g')
     END_VERSIONS
     """
 }

@@ -1,0 +1,16 @@
+input/
+*.log
+*.log.*
+work/
+.idea/
+.nextflow/
+*.log
+*.log.*
+modules/
+.github/
+lib/
+bin/
+conf/
+modules/
+pipeline_info/
+results/
