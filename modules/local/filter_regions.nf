@@ -51,6 +51,11 @@ process FILTER_VCF_REGIONS {
     """
     bedtools intersect -a $vcf_file -b $regions -header > $final_name
 
+    # Get first variant from VCF if filtered file doesn't contain variants
+    if [ -s \$(bcftools view -H $final_name) ]; then
+        head -n \$((\$(bcftools view -h $final_name | wc -l) + 1)) $vcf_file > $final_name
+    fi
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         bedtools: \$(bedtools --version | sed 's/bedtools //g')
