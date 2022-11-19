@@ -66,11 +66,11 @@ are pre-processed to produce smaller files and expanded regions before generatin
 
 ## Documentation
 
-The nf-core/reveal pipeline comes with documentation about the pipeline [usage](https://nf-co.re/reveal/usage), [parameters](https://nf-co.re/reveal/parameters) and [output](https://nf-co.re/reveal/output).
+The nf-core/reveal pipeline comes with documentation about the pipeline [usage](https://github.com/gariem/nf-core-reveal/blob/master/docs/usage.md) and [output](https://github.com/gariem/nf-core-reveal/blob/master/docs/output.md).
 
 ## Credits
 
-nf-core/reveal was originally written by Emilio Garcia (@gariem).
+nf-core/reveal was originally written by Emilio Garcia [@gariem](https://github.com/gariem/).
 
 
 ## Contributions and Support
