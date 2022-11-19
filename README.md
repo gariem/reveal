@@ -12,9 +12,7 @@
 
 ## Introduction
 
-<!-- TODO nf-core: Write a 1-2 sentence summary of what data the pipeline is for and what it does -->
-
-**nf-core/reveal** is a bioinformatics best-practice analysis pipeline for This pipeline takes screenshots of genomic regions using IGV.
+**nf-core/reveal** is a bioinformatics best-practice pipeline that automates the preparation of tracks, regions of interest and configurations to generate images containing data of interest for further analysis.
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker/Singularity containers making installation trivial and results highly reproducible. The [Nextflow DSL2](https://www.nextflow.io/docs/latest/dsl2.html) implementation of this pipeline uses one container per process which makes it much easier to maintain and update software dependencies. Where possible, these processes have been submitted to and installed from [nf-core/modules](https://github.com/nf-core/modules) in order to make them available to all nf-core pipelines, and to everyone within the Nextflow community!
 
@@ -24,10 +22,21 @@ On release, automated continuous integration tests run the pipeline on a full-si
 
 ## Pipeline summary
 
-<!-- TODO nf-core: Fill in short bullet-pointed list of the default steps in the pipeline -->
+![Pipeline Overview](docs/images/reveal-pipeline-overview.png)
 
-1. Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
-2. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
+1. Tracks and regions pre-processing:
+
+    Tracks (BAM, VCF, or BED Files), regions of interest (BED files), flanking window values (slops), and additional options
+are pre-processed to produce smaller files and expanded regions before generating the images.
+
+2. Configuration:
+
+    Depending of the backend (default IGV-Snapshots), configuration files are generated (e.g. IGV Session files and batch commands)
+
+3. Images generation
+
+   Pre-processed tracks, regions of interest, additional options, and configuration files are used to proudce images of the selected regions.
+
 
 ## Quick Start
 
@@ -50,10 +59,9 @@ On release, automated continuous integration tests run the pipeline on a full-si
 
 4. Start running your own analysis!
 
-   <!-- TODO nf-core: Update the example "typical command" below used to run the pipeline -->
 
    ```bash
-   nextflow run nf-core/reveal --input samplesheet.csv --outdir <OUTDIR> --genome GRCh37 -profile <docker/singularity/podman/shifter/charliecloud/conda/institute>
+   nextflow run gariem/nf-core-reveal --input config.yml --outdir <OUTDIR> --fasta <REFERENCE> -profile <docker/singularity>
    ```
 
 ## Documentation
@@ -62,24 +70,19 @@ The nf-core/reveal pipeline comes with documentation about the pipeline [usage](
 
 ## Credits
 
-nf-core/reveal was originally written by Emilio Garcia.
+nf-core/reveal was originally written by Emilio Garcia (@gariem).
 
-We thank the following people for their extensive assistance in the development of this pipeline:
-
-<!-- TODO nf-core: If applicable, make list of people who have also contributed -->
 
 ## Contributions and Support
 
 If you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).
 
-For further information or help, don't hesitate to get in touch on the [Slack `#reveal` channel](https://nfcore.slack.com/channels/reveal) (you can join with [this invite](https://nf-co.re/join/slack)).
+[//]: # (For further information or help, don't hesitate to get in touch on the [Slack `#reveal` channel]&#40;https://nfcore.slack.com/channels/reveal&#41; &#40;you can join with [this invite]&#40;https://nf-co.re/join/slack&#41;&#41;.)
 
 ## Citations
 
-<!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
-<!-- If you use  nf-core/reveal for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
+If you use  nf-core/reveal for your analysis, please cite it using the following doi: [10.5281/zenodo.7336272](https://doi.org/10.5281/10.5281/zenodo.7336272)
 
-<!-- TODO nf-core: Add bibliography of tools and data used in your pipeline -->
 
 An extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.
 
