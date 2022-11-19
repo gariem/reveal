@@ -16,17 +16,6 @@ You will need to create a samplesheet with information about the samples you wou
 --input '[path to samplesheet file]'
 ```
 
-### Multiple runs of the same sample
-
-The `sample` identifiers have to be the same when you have re-sequenced the same sample more than once e.g. to increase sequencing depth. The pipeline will concatenate the raw reads before performing any downstream analysis. Below is an example for the same sample sequenced across 3 lanes:
-
-```console
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L003_R1_001.fastq.gz,AEG588A1_S1_L003_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L004_R1_001.fastq.gz,AEG588A1_S1_L004_R2_001.fastq.gz
-```
-
 ### Full samplesheet
 
 The pipeline will auto-detect whether a sample is single- or paired-end using the information provided in the samplesheet. The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 3 columns to match those defined in the table below.
@@ -34,14 +23,28 @@ The pipeline will auto-detect whether a sample is single- or paired-end using th
 A final samplesheet file consisting of both single- and paired-end data may look something like the one below. This is for 6 samples, where `TREATMENT_REP3` has been sequenced twice.
 
 ```console
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz
-CONTROL_REP3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz
-TREATMENT_REP1,AEG588A4_S4_L003_R1_001.fastq.gz,
-TREATMENT_REP2,AEG588A5_S5_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,
+reveal:
+  tracks:
+    - name: "Long reads"
+      path: /home/user/data/sample.pacbio.bam
+    - name: "Short reads"
+      path: /home/egarcia/data/sample.ilumina.bam
+    - name: "Predicted SVs"
+      path: /home/egarcia/data/sample.sv_caller1.vcf
+  capture:
+    regions:
+      - path: /home/user/data/coordinates_of_interest.bed
+        prefix: "analysis01_"
+    slops: [50, 100, 200]
+    igvOptions:
+      - option: "SKIP_VERSION"
+        value: "null,2.12.2"
+      - option: "SHOW_SEQUENCE_TRANSLATION"
+        value: "true"
+      - option: "SAM.SHOW_SOFT_CLIPPED"
+        value: "true"
+      - option: "IGV.Bounds"
+        value: "0,0,1920,1080"
 ```
 
 | Column    | Description                                                                                                                                                                            |
@@ -57,7 +60,7 @@ An [example samplesheet](../assets/samplesheet.csv) has been provided with the p
 The typical command for running the pipeline is as follows:
 
 ```bash
-nextflow run nf-core/reveal --input samplesheet.csv --outdir <OUTDIR> --genome GRCh37 -profile docker
+nextflow run gariem/nf-core-reveal --input config.yml --outdir <OUTDIR> --fasta <REFERENCE> -profile <docker/singularity>
 ```
 
 This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
@@ -76,7 +79,7 @@ work                # Directory containing the nextflow working files
 When you run the above command, Nextflow automatically pulls the pipeline code from GitHub and stores it as a cached version. When running the pipeline after this, it will always use the cached version if available - even if the pipeline has been updated since. To make sure that you're running the latest version of the pipeline, make sure that you regularly update the cached version of the pipeline:
 
 ```bash
-nextflow pull nf-core/reveal
+nextflow pull gariem/nf-core-reveal
 ```
 
 ### Reproducibility
