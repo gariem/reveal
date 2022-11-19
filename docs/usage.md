@@ -1,16 +1,16 @@
 # nf-core/reveal: Usage
 
-## :warning: Please read this documentation on the nf-core website: [https://nf-co.re/reveal/usage](https://nf-co.re/reveal/usage)
+<!--## :warning: Please read this documentation on the nf-core website: [https://nf-co.re/reveal/usage](https://github.com/gariem/nf-core-reveal/usage)-->
 
 > _Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files._
 
-## Introduction
+<!-- ## Introduction -->
 
 <!-- TODO nf-core: Add documentation about anything specific to running your pipeline. For general topics, please point to (and add to) the main nf-core website. -->
 
 ## Samplesheet input
 
-You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row as shown in the examples below.
+You will need to create a configuration file with information about the tracks and regions you would like to use before running the pipeline. Use this parameter to specify its location. It has to be a YAML file with the sections as shown in the examples below.
 
 ```bash
 --input '[path to samplesheet file]'
@@ -18,9 +18,8 @@ You will need to create a samplesheet with information about the samples you wou
 
 ### Full samplesheet
 
-The pipeline will auto-detect whether a sample is single- or paired-end using the information provided in the samplesheet. The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 3 columns to match those defined in the table below.
-
-A final samplesheet file consisting of both single- and paired-end data may look something like the one below. This is for 6 samples, where `TREATMENT_REP3` has been sequenced twice.
+The tracks and capture/regions sections can have as many tracks as needed. The slops argument is required to generate images including n position to both sides of
+the capture regions. Additional IGV options can be added, but the below ones are recommended:
 
 ```console
 reveal:
@@ -47,20 +46,14 @@ reveal:
         value: "0,0,1920,1080"
 ```
 
-| Column    | Description                                                                                                                                                                            |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sample`  | Custom sample name. This entry will be identical for multiple sequencing libraries/runs from the same sample. Spaces in sample names are automatically converted to underscores (`_`). |
-| `fastq_1` | Full path to FastQ file for Illumina short reads 1. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
-| `fastq_2` | Full path to FastQ file for Illumina short reads 2. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
-
-An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
+An [example samplesheet](../assets/samplesheet.yaml) has been provided with the pipeline.
 
 ## Running the pipeline
 
 The typical command for running the pipeline is as follows:
 
 ```bash
-nextflow run gariem/nf-core-reveal --input config.yml --outdir <OUTDIR> --fasta <REFERENCE> -profile <docker/singularity>
+nextflow run gariem/nf-core-reveal --input config.yaml --outdir test_out --fasta <REFERENCE_PATH> -profile docker
 ```
 
 This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
@@ -86,7 +79,7 @@ nextflow pull gariem/nf-core-reveal
 
 It is a good idea to specify a pipeline version when running the pipeline on your data. This ensures that a specific version of the pipeline code and software are used when you run your pipeline. If you keep using the same tag, you'll be running the same version of the pipeline, even if there have been changes to the code since.
 
-First, go to the [nf-core/reveal releases page](https://github.com/nf-core/reveal/releases) and find the latest version number - numeric only (eg. `1.3.1`). Then specify this when running the pipeline with `-r` (one hyphen) - eg. `-r 1.3.1`.
+First, go to the [reveal releases page](https://github.com/gariem/nf-core-reveal/releases) and find the latest version number - numeric only (eg. `1.3.1`). Then specify this when running the pipeline with `-r` (one hyphen) - eg. `-r 1.3.1`.
 
 This version number will be logged in reports when you run the pipeline, so that you'll know what you used when you look back in the future.
 
@@ -104,8 +97,8 @@ Several generic profiles are bundled with the pipeline which instruct the pipeli
 
 The pipeline also dynamically loads configurations from [https://github.com/nf-core/configs](https://github.com/nf-core/configs) when it runs, making multiple config profiles for various institutional clusters available at run time. For more information and to see if your system is available in these configs please see the [nf-core/configs documentation](https://github.com/nf-core/configs#documentation).
 
-Note that multiple profiles can be loaded, for example: `-profile test,docker` - the order of arguments is important!
-They are loaded in sequence, so later profiles can overwrite earlier profiles.
+<!-- Note that multiple profiles can be loaded, for example: `-profile test,docker` - the order of arguments is important!
+They are loaded in sequence, so later profiles can overwrite earlier profiles. -->
 
 If `-profile` is not specified, the pipeline will run locally and expect all software to be installed and available on the `PATH`. This is _not_ recommended.
 
@@ -113,7 +106,7 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
   - A generic configuration profile to be used with [Docker](https://docker.com/)
 - `singularity`
   - A generic configuration profile to be used with [Singularity](https://sylabs.io/docs/)
-- `podman`
+<!-- - `podman`
   - A generic configuration profile to be used with [Podman](https://podman.io/)
 - `shifter`
   - A generic configuration profile to be used with [Shifter](https://nersc.gitlab.io/development/shifter/how-to-use/)
@@ -123,7 +116,7 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
   - A generic configuration profile to be used with [Conda](https://conda.io/docs/). Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity, Podman, Shifter or Charliecloud.
 - `test`
   - A profile with a complete configuration for automated testing
-  - Includes links to test data so needs no other parameters
+  - Includes links to test data so needs no other parameters -->
 
 ### `-resume`
 

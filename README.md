@@ -61,7 +61,7 @@ are pre-processed to produce smaller files and expanded regions before generatin
 
 
    ```bash
-   nextflow run gariem/nf-core-reveal --input config.yml --outdir <OUTDIR> --fasta <REFERENCE> -profile <docker/singularity>
+   nextflow run gariem/nf-core-reveal --input config.yaml --outdir <OUTDIR> --fasta <REFERENCE_PATH> -profile <docker/singularity>
    ```
 
 ## Documentation
