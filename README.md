@@ -1,4 +1,4 @@
-# ![nf-core/reveal](docs/images/nf-core-reveal_logo_light.png#gh-light-mode-only) ![nf-core/reveal](docs/images/nf-core-reveal_logo_dark.png#gh-dark-mode-only)
+<!--# ![nf-core/reveal](docs/images/nf-core-reveal_logo_light.png#gh-light-mode-only) ![nf-core/reveal](docs/images/nf-core-reveal_logo_dark.png#gh-dark-mode-only) -->
 
 <!--[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/reveal/results)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.7336272)-->
 
@@ -66,11 +66,11 @@ are pre-processed to produce smaller files and expanded regions before generatin
 
 ## Documentation
 
-The nf-core/reveal pipeline comes with documentation about the pipeline [usage](https://nf-co.re/reveal/usage), [parameters](https://nf-co.re/reveal/parameters) and [output](https://nf-co.re/reveal/output).
+The nf-core/reveal pipeline comes with documentation about the pipeline [usage](https://github.com/gariem/nf-core-reveal/blob/master/docs/usage.md) and [output](https://github.com/gariem/nf-core-reveal/blob/master/docs/output.md).
 
 ## Credits
 
-nf-core/reveal was originally written by Emilio Garcia (@gariem).
+nf-core/reveal was originally written by Emilio Garcia [@gariem](https://github.com/gariem/).
 
 
 ## Contributions and Support
